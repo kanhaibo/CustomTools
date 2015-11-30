@@ -28,6 +28,7 @@ class 渤海看(DynamicDocument):
 class AIIBCountry(DynamicDocument):
     AIIB_Country = StringField()
     AIIB_Country_spell = StringField()
+    AIIB_Country_en = StringField()
 
     def clean(self):
         self.AIIB_Country_spell = pinyin.get(self.AIIB_Country)
@@ -111,13 +112,33 @@ class enterprise(DynamicDocument):
 
 if __name__ == '__main__':
     from pymongo import MongoClient
+    import xlrd
+    xlrd.Book.encoding = 'gbk'
+    bk = xlrd.open_workbook('/Users/kanhaibo/Downloads/亚投行国家名称中英文.xlsx')
+    bk1 = xlrd.open_workbook('/Users/kanhaibo/Downloads/一带一路国家名称中英文.xlsx')
+    sh = bk.sheet_by_index(0)
+    sh1 = bk1.sheet_by_index(0)
+    print(sh1.nrows)
+    print(sh1.ncols)
     conn = MongoClient('192.168.100.222:27017')
     db = conn['一带一路国家钢企名录']
-    for i in db['AIIBCountry'].find():
-        db['AIIBCountry'].update({'_id': i['_id']},
-                                {'$set': {'AIIB_Country_spell':
-                                pinyin.get(i['AIIB_Country'])}})
+    for xx in range(0, sh.nrows):
+        print(sh.row_values(xx))
+        db['AIIBCountry'].update({'AIIB_Country': sh.row_values(xx)[0]},
+                             {'$set': {'AIIB_Country_en': sh.row_values(xx)[1]}
+                             })
+    for yy in range(0, sh1.nrows):
+        print(sh1.row_values(yy))
+        db['steel_enterprises_directory_country'].\
+                    update({'country_name': sh1.row_values(yy)[0]},
+                           {'$set': {'country_name_en': sh1.row_values(yy)[1]}
+                           })
     conn.close()
+#     for i in db['AIIBCountry'].find():
+#         db['AIIBCountry'].update({'_id': i['_id']},
+#                                 {'$set': {'AIIB_Country_spell':
+#                                 pinyin.get(i['AIIB_Country'])}})
+#     conn.close()
 #     for p in steel_enterprises_directory.objects(Country='Pakistan'):
 #         print p['label_flag']
 #     for x in cpi.objects():
