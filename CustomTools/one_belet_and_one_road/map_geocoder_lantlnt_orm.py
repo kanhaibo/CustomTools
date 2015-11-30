@@ -20,8 +20,10 @@ connect(alias='cantonfair117',
         host='mongodb://192.168.0.17:27050/cantonfair117')
 
 
-class 渤海看(DynamicDocument):
-    阚海波 = StringField()
+class country_all(DynamicDocument):
+    country_name = StringField()
+    country_spell = StringField()
+    country_name_en = StringField()
     meta = {'db_alias': 'OneBeltOneRoad'}
 
 
@@ -110,7 +112,11 @@ class enterprise(DynamicDocument):
     AREA = StringField()
     meta = {'db_alias': 'chinatsi'}
 
-if __name__ == '__main__':
+
+def update_excel_to_mongo():
+    '''
+    @summary: 更新亚投行，一带一路国家名称的中英文对称
+    '''
     from pymongo import MongoClient
     import xlrd
     xlrd.Book.encoding = 'gbk'
@@ -134,7 +140,40 @@ if __name__ == '__main__':
                            {'$set': {'country_name_en': sh1.row_values(yy)[1]}
                            })
     conn.close()
-#     for i in db['AIIBCountry'].find():
+
+
+def update_collection_to_collection():
+    from pymongo import MongoClient
+    conn = MongoClient('192.168.0.17:27050')
+    db = conn['一带一路国家钢企名录']
+    temp_aiib = db['AIIBCountry'].find({},
+                    ['AIIB_Country', 'AIIB_Country_spell', 'AIIB_Country_en'])
+    temp_country = db['steel_enterprises_directory_country'].find({},
+                    ['country_name', 'country_name_spell', 'country_name_en'])
+    tempset = set()
+    for m in temp_aiib:
+        temp_object = country_all()
+        temp_object.country_name = m['AIIB_Country']
+        temp_object.country_spell = m['AIIB_Country_spell']
+        temp_object.country_name_en = m['AIIB_Country_en']
+        temp_object.save()
+        tempset.add(m['AIIB_Country'])
+    for l in temp_country:
+        if l['country_name'] in tempset:
+            pass
+        else:
+            temp_object = country_all()
+            temp_object.country_name = l['country_name']
+            temp_object.country_spell = l['country_name_spell']
+            temp_object.country_name_en = l['country_name_en']
+            temp_object.save()
+            tempset.add(l['country_name'])
+    conn.close()
+
+
+if __name__ == '__main__':
+    update_collection_to_collection()
+#     for i in db['steel_enterprises_directory'].find():
 #         db['AIIBCountry'].update({'_id': i['_id']},
 #                                 {'$set': {'AIIB_Country_spell':
 #                                 pinyin.get(i['AIIB_Country'])}})
@@ -145,6 +184,7 @@ if __name__ == '__main__':
 #         print x.Date
 #         print x['CPI同比']
 #     collection = steel_enterprises_directory._get_collection()
+
 #     print collection.find({'Country': {'$exists': True}}).count()
 #     print steel_enterprises_directory.objects(label_flag=1).
 #sum('YearEstablished')
