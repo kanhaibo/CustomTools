@@ -17,6 +17,7 @@ class GeocoderToLatLnt(threading.Thread):
     @summary: 多线程转换经纬度，转换经纬度速度慢，主要是请求
     谷歌的地图api接口的时候，造成的。
     '''
+
     def __init__(self, threadname, db, cols):
         '''
         @summary: 初始化对象
@@ -39,9 +40,9 @@ class GeocoderToLatLnt(threading.Thread):
         conn = MongoClient('192.168.0.17:27050')
         dbTemp = conn[self.db]
         dbTemp[self.cols].update({'geometry': {'$exists': False}},
-                        {'$set': {'label_flag': 0}}, multi=True)
+                                 {'$set': {'label_flag': 0}}, multi=True)
         dbTemp[self.cols].update({'geometry': {'$exists': True}},
-                {'$set': {'label_flag': 2}}, multi=True)
+                                 {'$set': {'label_flag': 2}}, multi=True)
         conn.close()
 
     def collection_to_latlnt(self):
@@ -56,10 +57,10 @@ class GeocoderToLatLnt(threading.Thread):
         elif dbTemp[self.cols].find({'联系地址': {'$exists': True}}).count() > 0:
             addressSearch = '联系地址'
         elif dbTemp[self.cols].find({'HeadOffice': {'$exists': True}})\
-            .count() > 0:
+                .count() > 0:
             addressSearch = 'HeadOffice'
         elif dbTemp[self.cols].find({'Address地址': {'$exists': True}})\
-            .count() > 0:
+                .count() > 0:
             addressSearch = 'Address地址'
         else:
             addressSearch = ''
@@ -72,14 +73,14 @@ class GeocoderToLatLnt(threading.Thread):
                     if p[addressSearch].strip() != '':
                         try:
                             tempLatLnt = address_to_latlnt.address_to_LatLnts(
-                            p[addressSearch].replace(' ', '+'))
+                                p[addressSearch].replace(' ', '+'))
                         except Exception as e:
                             tempLatLnt = ''
                         if tempLatLnt != '':
                             dbTemp[self.cols].update(
-                                            {'_id': p['_id']},
-                                            {'$set': {'geometry': tempLatLnt,
-                                                      'label_flag': 2}})
+                                {'_id': p['_id']},
+                                {'$set': {'geometry': tempLatLnt,
+                                          'label_flag': 2}})
                 except Exception as e:
                     pass
                 finally:
@@ -92,6 +93,7 @@ class DisplayLatLntResults(threading.Thread):
     '''
     @summary: 得到当前库内传进来的集合中原有多少行数据，其中更新了经纬度的数据有多少
     '''
+
     def __init__(self, threadname, db, cols):
         '''
         @summary: 初始化对象
@@ -118,7 +120,7 @@ class DisplayLatLntResults(threading.Thread):
             dbTemp = conn[self.db]
             receive_all = dbTemp[self.cols].find().count()
             receive_latlnt = dbTemp[self.cols].find(
-                            {"geometry": {'$exists': True}}).count()
+                {"geometry": {'$exists': True}}).count()
         except Exception as e:
             pass
         finally:
@@ -146,7 +148,7 @@ def main(db='cantonfair117'):
     '''
     @summary: 更新一个库内的所有集合,每个集合同时更新
     '''
-    #把当前库内的集合都循环出来，放在里面里面
+    # 把当前库内的集合都循环出来，放在里面里面
     temp_cols = []
     try:
         conn = MongoClient('192.168.0.17:27050')

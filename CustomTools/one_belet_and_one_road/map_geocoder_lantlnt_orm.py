@@ -9,8 +9,6 @@ from mongoengine import connect
 from mongoengine import DynamicDocument
 from mongoengine import StringField
 from mongoengine import IntField
-import simplejson
-import datetime
 import pinyin
 
 connect(alias='OneBeltOneRoad', host='mongodb://192.168.0.17:27050/一带一路国家钢企名录')
@@ -48,6 +46,7 @@ class steel_enterprises_directory_country(DynamicDocument):
 
 
 class steel_enterprises_directory(DynamicDocument):
+
     '''
     @summary: 一带一路国家钢铁企业集合
     @param Country: 国家
@@ -131,14 +130,13 @@ def update_excel_to_mongo():
     for xx in range(0, sh.nrows):
         print(sh.row_values(xx))
         db['AIIBCountry'].update({'AIIB_Country': sh.row_values(xx)[0]},
-                             {'$set': {'AIIB_Country_en': sh.row_values(xx)[1]}
-                             })
+                                 {'$set': {'AIIB_Country_en': sh.row_values(xx)[1]}}
+                                 )
     for yy in range(0, sh1.nrows):
         print(sh1.row_values(yy))
-        db['steel_enterprises_directory_country'].\
-                    update({'country_name': sh1.row_values(yy)[0]},
-                           {'$set': {'country_name_en': sh1.row_values(yy)[1]}
-                           })
+        db['steel_enterprises_directory_country'].update(
+            {'country_name': sh1.row_values(yy)[0]},
+            {'$set': {'country_name_en': sh1.row_values(yy)[1]}})
     conn.close()
 
 
@@ -147,9 +145,9 @@ def update_collection_to_collection():
     conn = MongoClient('192.168.0.17:27050')
     db = conn['一带一路国家钢企名录']
     temp_aiib = db['AIIBCountry'].find({},
-                    ['AIIB_Country', 'AIIB_Country_spell', 'AIIB_Country_en'])
+                                       ['AIIB_Country', 'AIIB_Country_spell', 'AIIB_Country_en'])
     temp_country = db['steel_enterprises_directory_country'].find({},
-                    ['country_name', 'country_name_spell', 'country_name_en'])
+                                                                  ['country_name', 'country_name_spell', 'country_name_en'])
     tempset = set()
     for m in temp_aiib:
         temp_object = country_all()
@@ -187,7 +185,7 @@ if __name__ == '__main__':
 
 #     print collection.find({'Country': {'$exists': True}}).count()
 #     print steel_enterprises_directory.objects(label_flag=1).
-#sum('YearEstablished')
+#     sum('YearEstablished')
 #     collection.update({'geometry': {'$exists': False}},
 #                         {'$set': {'label_flag': 0}}, multi=True)
 #     vtemp = steel_enterprises_directory._get_collection()

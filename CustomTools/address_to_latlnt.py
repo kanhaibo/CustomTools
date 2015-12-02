@@ -14,21 +14,21 @@ import urllib.request
 import socket
 import redis
 from simplejson import loads
-#存放所有的key
+# 存放所有的key
 
 
-def address_to_LatLnt(address='', key='', cn=True):
+def address_to_LatLnt(address='', key='', cn=False):
     '''
     通过传进来的地址得到经纬度
     '''
     if cn:
         response = urllib.request.urlopen('https://maps.google.cn/maps/api/'
-                    'geocode/json?address=%s&sensor=true&key=%s&language=zh-CN'
-                        % (address, key), timeout=1).read()
+                                          'geocode/json?address=%s&sensor=true&key=%s&language=zh-CN'
+                                          % (address, key), timeout=2).read()
     else:
         response = urllib.request.urlopen('https://maps.googleapis.com/maps/'
-                               'api/geocode/json?address=%s&key=%s'\
-                               % (address, key), timeout=1).read()
+                                          'api/geocode/json?address=%s&key=%s'
+                                          % (address, key), timeout=2).read()
     return response
 
 
@@ -75,7 +75,7 @@ def address_to_LatLnts(address=''):
     '''
     增加多个key循环使用的方式进行查找
     '''
-    #返回值的经纬度
+    # 返回值的经纬度
     key = return_key()
     if key == 'error':
         return ''
@@ -87,7 +87,7 @@ def address_to_LatLnts(address=''):
 #         return json.loads(str(response.decode('utf-8')))
 
 
-if  __name__ == '__main__':
-    print(address_to_LatLnts('Mile 7 1/2, Jalan Tuaran, Locked Bag 87, 88992'\
+if __name__ == '__main__':
+    print(address_to_LatLnts('Mile 7 1/2, Jalan Tuaran, Locked Bag 87, 88992'
                              ' Kota Kinabalu, Sabah, Malaysia'.
                              replace(' ', '+')))

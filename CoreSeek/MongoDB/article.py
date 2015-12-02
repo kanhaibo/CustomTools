@@ -1,17 +1,20 @@
-# -*- coding: utf-8 -*-
+# -*- coding:utf-8 -*-
 '''
 Created on 2015-5-12
 
 @author: kanhaibo
 '''
-import pymongo,logging,dict4ini
-confFilePrivate='articl.conf'
+import pymongo
+import logging
+import configparser
+confFilePrivate = 'articl.conf'
 
 
 class MainSource(object):
-    def __init__(self,cfg):
-        self.cfg=dict4ini.DictIni(confFilePrivate)
-        self._rowCount=0
+    def __init__(self, cfg):
+        self.cfg = configparser.ConfigParser().read(confFilePrivate)
+        self.cfg.read(confFilePrivate, 'utf-8')
+        self._rowCount = 0
         self.m_cursor = None
         self.m_dbconn = None
         self.m_db = None
@@ -21,22 +24,22 @@ class MainSource(object):
         self.m_start_id = 0
         #base str
         self.m_basesql_str = ''
-    
+
     def GetScheme(self):
         '''
         获取结构，docid，文本，整数
         '''
-        return[('_id',{'docid':True}),
-               ('business_scope',{'type':'text'}),
-               ('company',{'type':'text'}),
-               ('company_address',{'type':'text'})]
-    
+        return[('_id', {'docid':True}),
+               ('business_scope', {'type':'text'}),
+               ('company', {'type':'text'}),
+               ('company_address', {'type':'text'})]
+
     def GetFieldOrder(self):
         '''
         字段的优先顺序
         '''
-        return[('business_scope','company_address')]
-    
+        return[('business_scope', 'company_address')]
+
     def Connected(self):
         '''
         如果是数据库，则在此处做数据库连接
@@ -46,12 +49,14 @@ class MainSource(object):
 #             logging.error('Not has MongoDB info')
 #             return False
         try:
-            self.m_dbconn = pymongo.MongoClient(host=self.cfg.mongodb.host,\
-                                               port = int(self.cfg.mongodb.port))
-            self.m_db = self.m_dbconn[self.cfg.mongodb.dbname]
-            self.m_db.authenticate(self.cfg.mongodb.username,self.cfg.mongodb.password)
-        except pymongo.errors,e:
-            logging.error("Error %d: %s" , e.args[0], e.args[1])
+            self.m_dbconn = pymongo.MongoClient(
+                                    host=self.cfg.get('mongodb', 'host'),\
+                                    port=int(self.cfg.get('mongodb', 'port)')))
+            self.m_db = self.m_dbconn[self.cfg.get('mongodb', 'dbname')]
+            self.m_db.authenticate(self.cfg.get('mongodb', 'username'),
+                                   self.cfg.get('mongodb', 'password'))
+        except pymongo.errors as e:
+            logging.error("Error %d: %s", e.args[0], e.args[1])
             return False
         return True
 
@@ -68,24 +73,23 @@ class MainSource(object):
         '''
         for mm in self.m_cursor:
             return self._getRow(mm)
-    
-    def _getRow(self,m_row):
-#         print m_row
+
+    def _getRow(self, m_row):
         self._id = m_row['_id']
-        if not m_row.has_key('BUSINESS_SCOPE'):
+        if not ('BUSINESS_SCOPE' in m_row):
             self.business_scope = ''
-        else:    
+        else:
             self.business_scope = m_row['BUSINESS_SCOPE'].encode('utf-8')
-        if not m_row.has_key('COMPANY'):
+        if not ('COMPANY' in m_row):
             self.company = ''
-        else:    
-            self.company = m_row['COMPANY']     
-        if not m_row.has_key('COMPANY'):
+        else:
+            self.company = m_row['COMPANY']
+        if not ('COMPANY' in m_row):
             self.company_address = ''
         else:
             self.company_address = m_row['COMPANY']
-       
-            
+
+
 if __name__ == '__main__':
     conf = {}
     tempCount = MainSource(conf)

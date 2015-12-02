@@ -3,7 +3,7 @@
 Created on 2015-5-15
 @author: kanhaibo
 '''
-import dict4ini
+import configparser
 import cx_Oracle
 import os
 confFilePrivate = 'articl.conf'
