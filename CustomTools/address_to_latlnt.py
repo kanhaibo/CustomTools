@@ -11,7 +11,6 @@ comment:增加中国地转换接口
 '''
 
 import urllib.request
-import socket
 import redis
 from simplejson import loads
 # 存放所有的key
@@ -21,14 +20,26 @@ def address_to_LatLnt(address='', key='', cn=False):
     '''
     通过传进来的地址得到经纬度
     '''
+#     newaddress = 'address=%s&key=%s' % (address, key)
+#     address = 'https://maps.google.cn/maps/api/geocode/json?' + newaddress
+#     print(address)
+#     fp = urllib.request.urlopen(
+#         'https://maps.googleapis.com/maps/api/geocode/json?' + urllib.parse.quote(newaddress), timeout=2)
+# 
+#     response = fp.read()
+# # note that Python3 does not read the html code as string
+# # but as html code bytearray, convert to string with
+#     print(response)
+#     fp.close()
     if cn:
         response = urllib.request.urlopen('https://maps.google.cn/maps/api/'
                                           'geocode/json?address=%s&sensor=true&key=%s&language=zh-CN'
                                           % (address, key), timeout=2).read()
     else:
         response = urllib.request.urlopen('https://maps.googleapis.com/maps/'
-                                          'api/geocode/json?address=%s&key=%s'
+                                      'api/geocode/json?address=%s&key=%s'
                                           % (address, key), timeout=2).read()
+    # print('stop')
     return response
 
 
@@ -85,9 +96,9 @@ def address_to_LatLnts(address=''):
     except:
         return ''
 #         return json.loads(str(response.decode('utf-8')))
+#.replace(' ', ' +')
 
 
 if __name__ == '__main__':
-    print(address_to_LatLnts('Mile 7 1/2, Jalan Tuaran, Locked Bag 87, 88992'
-                             ' Kota Kinabalu, Sabah, Malaysia'.
-                             replace(' ', '+')))
+    print(address_to_LatLnts(
+        '''24-26, Boulevard d'Avranches L-1160 Luxembourg'''.replace(' ', '+')))

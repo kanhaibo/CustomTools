@@ -25,7 +25,7 @@ def excel_to_mogo(dirname, db="cantonfair110", user="cantonfair",
                     and os.path.splitext(i)[1] != '.txt'\
                     and '~' not in os.path.splitext(i)[0]:
                 fname = dirname + i
-                print(i)
+                print(i.encode('utf-8'))
                 xlrd.Book.encoding = 'gbk'
                 bk = xlrd.open_workbook(fname)
                 try:
@@ -66,14 +66,13 @@ def excel_to_mogo(dirname, db="cantonfair110", user="cantonfair",
 
 
 if __name__ == '__main__':
-    pass
+    # pass
     excel_to_mogo('/Users/kanhaibo/temp/top_one_hundred/', db='top_one_hundred',
                   user="cantonfair",
                   passwd="cantonfair")
     # for x in os.listdir('/Users/kanhaibo/temp/87国宏观数据'):
     #     temp_path = '/Users/kanhaibo/temp/87国宏观数据/' + x + '/'
     #     if (os.path.isdir(temp_path)):
-    #         print(temp_path)
     #         excel_to_mogo(temp_path, db=x,
     #                       user="cantonfair",
     #                       passwd="cantonfair")

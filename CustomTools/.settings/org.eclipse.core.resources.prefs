@@ -1,9 +1,11 @@
-#Wed Dec 02 10:50:31 CST 2015
+#Thu Dec 03 15:01:27 CST 2015
 eclipse.preferences.version=1
 encoding//cantonfair/map_geocoder_latlnt_.py=utf-8
 encoding//macroeconomic/pakistan/pakistan.py=utf-8
+encoding//macroeconomic/repair_macroeconomic_data.py=utf-8
 encoding//one_belet_and_one_road/map_geocoder_lantlnt_orm.py=utf-8
 encoding//one_belet_and_one_road/steel_address_to_latlnt.py=utf-8
+encoding//top100/do_gemotry.py=utf-8
 encoding//top100/sqlserver_to_mongodb.py=utf-8
 encoding/address_to_latlnt.py=utf-8
 encoding/excel_to_mongo.py=utf-8
