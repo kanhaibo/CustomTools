@@ -15,48 +15,59 @@ connect(alias='top_one_hundred',
         host='mongodb://192.168.0.17:27050/top_one_hundred')
 
 
-# class steel_enterprises_directory(DynamicDocument):
-#     Company = StringField()
-
-
 class top_one_hundred(DynamicDocument):
-    groupcompanyaddress = StringField()
+    groupcompanyaddress_en = StringField()
     meta = {'db_alias': 'top_one_hundred'}
 
 
-if __name__ == '__main__':
-    # from pymongo import MongoClient
-    # conn = MongoClient('192.168.0.17:27050')
-    # dbtemp = conn['宏观钢铁行业']
-    # print(dbtemp['0003模铸钢锭产量比例'].find({"2006": 3.9}).count())
-    # # print(top_one_hundred.objects(国家 != '中国').count())
+def do_geometry():
+    for temp in top_one_hundred.objects():
+        tempdic = {}
+        if temp.groupcompany_cn == '艾西达斯':
+            # print(tempgroup_geometry)
+            tempdic['location'] = {
+                'lat': 41.045317, 'lng': 28.825875}
+
+            temp.group_geometry = tempdic
+            temp.save()
+
+    collections = top_one_hundred._get_collection()
+    print(collections.find({'group_geometry': {'$exists': False}}).count())
+    # for n in collections.find({'group_geometry': {'$exists': True}}):
+    #     print(n['group_geometry'])
+    for m in collections.find({'group_geometry': {'$exists': False}}):
+        print(m)
+    # print(m['groupcompanylatitude'], m['groupcompany_cn'])
+
+    #     if m['groupcompanylatitude'] != '':
+    #         print(m['groupcompanylatitude'], m['groupcompanylongitude'])
+    #         m.save()
+    #         {'location': {'lng': 139.7631367, 'lat': 35.6791131}}
+    # yy.group_geometry = '{'
+    #     print(yy.groupcompanylatitude, yy.groupcompanylongitude)
+
+
+def do_gemotry():
     for xx in top_one_hundred.objects():
-        # if xx.groupcompany == '''ArcelorMittal *''':
-        #     xx.groupcompanyaddress = '''24-26, Boulevard
-        #   d'Avranches L-1160 Luxembourg'''
-        #     xx.save()
-        #         try:
         try:
-            mm = str(xx.groupcompanyaddress.encode('utf-8'), 'utf-8')
+            mm = str(xx.groupcompanyaddress_en.encode('utf-8'), 'utf-8')
         except:
-            mm = str(xx.groupcompanyaddress.encode('ascii'), 'ascii')
-        print(mm)
-        # try:
-        #     temp_gemtory = address_to_latlnt.address_to_LatLnts(
-        #         mm.replace(' ', '+'))
-        # except Exception as e:
-        #     temp_gemtory = ''
-        # print(mm, ' +++', temp_gemtory)
-#         if temp_gemtory == '':
-#             pass
-#         else:
-#             xx.groupgemorty = temp_gemtory
-#             xx.save()
+            mm = str(xx.groupcompanyaddress_en.encode('ascii'), 'ascii')
+        temp_gemtory = ''
+        if mm != '':
+            try:
+                temp_gemtory = address_to_latlnt.address_to_LatLnts(
+                    mm.replace(' ', '+'))
+            except:
+                temp_gemtory = ''
+        print(mm, ' +++', temp_gemtory)
+        if temp_gemtory == '':
+            pass
+        else:
+            xx.group_geometry = temp_gemtory
+            xx.save()
     print('over')
-    #     xx.groupcompanyaddress))
-    # xx.groupgemorty = address_to_latlnt.address_to_LatLnts('sdfsd')
-    # xx.save()
-    # if (xx.国家.encode('utf8') == '中国'.encode('utf-8')):
-    #     print(xx['集团公司地址'].encode('utf8'))
-    # xx['集团公司经纬度'] =
-    # print(top_one_hundred.objects().count())
+
+
+if __name__ == '__main__':
+    do_geometry()

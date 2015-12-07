@@ -9,6 +9,47 @@ from mongoengine import *
 from pymongo import MongoClient
 from datetime import datetime
 
+connect(alias='exchange_rate',
+        host='mongodb://192.168.0.17:27050/exchange_rate')
+
+
+class exchange_rate(DynamicDocument):
+    collection = StringField()
+    meta = {'db_alias': 'exchange_rate'}
+
+
+def do_exchange_rate():
+    '''
+    @summary: 修改导入数据中，有一列数据错误。
+    '''
+    for i in exchange_rate.objects(db='阿尔巴尼亚'):
+        i.column = 'GDP'
+        i.save()
+        print(i['collection'], i['db'])
+
+
+def all_country_exchange_rate():
+    '''
+    @summary: 修改各个宏观国家里面的汇率机制->百万美元
+    '''
+    conn = MongoClient('192.168.0.17:27050')
+    dbtemp = conn['exchange_rate']
+    print(datetime.now())
+    for mm in dbtemp['exchange_rate'].find():
+        # print(mm['db'], mm['collection'], mm[
+        #       'column'], mm['rate'])
+        for ii in conn[mm['db']][mm['collection']].find():
+            try:
+                tempfloat = float(ii[mm['column']])
+            except Exception as e:
+                tempfloat = 0
+            tempfloat = tempfloat * mm['rate']
+            conn[mm['db']][mm['collection']].update(
+                {'_id': ii['_id']}, {'$set': {'exchange_result': tempfloat,
+                                              'display_unit': mm['new_exchange_rate']}})
+
+    conn.close()
+
 
 def all_country_db():
     '''
@@ -52,11 +93,11 @@ def all_country_db():
                                     except:
                                         try:
                                             tempdate = datetime.strptime(temp,
-                                                                    '%Y')
+                                                                         '%Y')
                                         except:
                                             tempdate = datetime.strptime(
-                                                            '1900-1-1',
-                                                             '%Y-%m-%d')
+                                                '1900-1-1',
+                                                '%Y-%m-%d')
                     year = tempdate.strftime('%Y')
                     month = tempdate.strftime('%m')
                     day = tempdate.strftime('%d')
@@ -64,21 +105,23 @@ def all_country_db():
                         pass
                     else:
                         conn[mm['country_name']][i].update(
-                                            {'_id': yy['_id']},
-                                            {'$set': {'year': year,
-                                                      'month': month,
-                                                      'day': day}}
-                                            )
+                            {'_id': yy['_id']},
+                            {'$set': {'year': year,
+                                      'month': month,
+                                      'day': day}}
+                        )
 #                 print(i)
             conn.close()
     print(datetime.now())
 
 
 if __name__ == '__main__':
-#     出口数量商品细分
-#     conn = MongoClient('192.168.0.17:27050')
-#     dbtemp = conn['中国']
-#     for m in dbtemp['出口数量商品细分'].find({}, ['date']):
-#         print(datetime.strptime(m['date'], '%m月 %Y'))
-#     print(datetime.strptime('1900-1-1', '%Y-%m-%d').strftime('%Y'))
-    all_country_db()
+    #     出口数量商品细分
+    #     conn = MongoClient('192.168.0.17:27050')
+    #     dbtemp = conn['中国']
+    #     for m in dbtemp['出口数量商品细分'].find({}, ['date']):
+    #         print(datetime.strptime(m['date'], '%m月 %Y'))
+    #     print(datetime.strptime('1900-1-1', '%Y-%m-%d').strftime('%Y'))
+    # all_country_db()
+    all_country_exchange_rate()
+    # do_exchange_rate()

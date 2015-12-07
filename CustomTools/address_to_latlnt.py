@@ -25,7 +25,7 @@ def address_to_LatLnt(address='', key='', cn=False):
 #     print(address)
 #     fp = urllib.request.urlopen(
 #         'https://maps.googleapis.com/maps/api/geocode/json?' + urllib.parse.quote(newaddress), timeout=2)
-# 
+#
 #     response = fp.read()
 # # note that Python3 does not read the html code as string
 # # but as html code bytearray, convert to string with
@@ -33,11 +33,11 @@ def address_to_LatLnt(address='', key='', cn=False):
 #     fp.close()
     if cn:
         response = urllib.request.urlopen('https://maps.google.cn/maps/api/'
-                                          'geocode/json?address=%s&sensor=true&key=%s&language=zh-CN'
+                                          'geocode/json?address=%s&key=%s'
                                           % (address, key), timeout=2).read()
     else:
         response = urllib.request.urlopen('https://maps.googleapis.com/maps/'
-                                      'api/geocode/json?address=%s&key=%s'
+                                          'api/geocode/json?address=%s&key=%s'
                                           % (address, key), timeout=2).read()
     # print('stop')
     return response
@@ -101,4 +101,5 @@ def address_to_LatLnts(address=''):
 
 if __name__ == '__main__':
     print(address_to_LatLnts(
-        '''24-26, Boulevard d'Avranches L-1160 Luxembourg'''.replace(' ', '+')))
+        ''' Devekaldirimi Caddessi No. 21, Gunesli Mah, Istanbul, 34212, Turkey
+        '''.replace(' ', '+')))

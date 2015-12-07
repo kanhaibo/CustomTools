@@ -67,11 +67,11 @@ def excel_to_mogo(dirname, db="cantonfair110", user="cantonfair",
 
 if __name__ == '__main__':
     # pass
-    excel_to_mogo('/Users/kanhaibo/temp/top_one_hundred/', db='top_one_hundred',
+    excel_to_mogo('/Users/kanhaibo/temp/exchange_rate/', db='exchange_rate',
                   user="cantonfair",
                   passwd="cantonfair")
-    # for x in os.listdir('/Users/kanhaibo/temp/87国宏观数据'):
-    #     temp_path = '/Users/kanhaibo/temp/87国宏观数据/' + x + '/'
+    # for x in os.listdir('/Users/kanhaibo/temp/exchange_rate'):
+    #     temp_path = '/Users/kanhaibo/temp/exchange_rate/' + x + '/'
     #     if (os.path.isdir(temp_path)):
     #         excel_to_mogo(temp_path, db=x,
     #                       user="cantonfair",
