@@ -93,7 +93,7 @@ def address_to_LatLnts(address=''):
     response = address_to_LatLnt(address, str(key, 'utf-8'))
     try:
         return loads(str(response, 'utf-8'))['results'][0]['geometry']
-    except:
+    except Exception as e:
         return ''
 #         return json.loads(str(response.decode('utf-8')))
 #.replace(' ', ' +')
@@ -101,5 +101,5 @@ def address_to_LatLnts(address=''):
 
 if __name__ == '__main__':
     print(address_to_LatLnts(
-        ''' Devekaldirimi Caddessi No. 21, Gunesli Mah, Istanbul, 34212, Turkey
+        ''' West Wing of Hyundai Kia Motors Building, 12 Heolleung-ro, Seocho-gu, Seoul, Korea
         '''.replace(' ', '+')))

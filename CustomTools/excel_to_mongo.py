@@ -51,10 +51,12 @@ def excel_to_mogo(dirname, db="cantonfair110", user="cantonfair",
                     # 循环插入此文档内部的数据
                     dicHead = []
                     for pp in range(0, ncols):
-                        # print(
-                        #     sh.row_values(0)[pp].encode('utf-8'))
-                        dicHead.append(sh.row_values(0)[pp].
-                                       encode('utf-8').decode('utf-8'))
+                        try:
+                            dicHead.append(sh.row_values(0)[pp].
+                                           encode('utf-8').decode('utf-8'))
+                        except:
+                            dicHead.append(
+                                'y' + str(int(sh.row_values(0)[pp])))
                     for ll in range(1, nrows):
                         tempDb["" + os.path.splitext(i)[0] + ""].insert(dict(
                             zip(dicHead, sh.row_values(ll))))
@@ -67,7 +69,7 @@ def excel_to_mogo(dirname, db="cantonfair110", user="cantonfair",
 
 if __name__ == '__main__':
     # pass
-    excel_to_mogo('/Users/kanhaibo/temp/exchange_rate/', db='exchange_rate',
+    excel_to_mogo('/Users/kanhaibo/temp/钢铁数据/', db='宏观钢铁行业',
                   user="cantonfair",
                   passwd="cantonfair")
     # for x in os.listdir('/Users/kanhaibo/temp/exchange_rate'):

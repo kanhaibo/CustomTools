@@ -1,7 +1,7 @@
 from mongoengine import *
 
 connect(alias='cantonfair117',
-        host='mongodb://192.168.0.17:27050/cantonfair117')
+        host='mongodb://192.168.100.222:27017/cantonfair117')
 
 
 class 家具采购商名录(DynamicDocument):
@@ -35,15 +35,18 @@ class 玩具采购商名录(DynamicDocument):
 def trip_blank():
     ''''''
     from pymongo import MongoClient
-    conn = MongoClient('192.168.0.17:27050')
+    conn = MongoClient('192.168.100.222:27017')
     for i in 玩具采购商名录.objects():
         try:
-            i.国家 = conn['一带一路国家钢企名录']['country_all'].find_one(
-                {'country_name_en': i.国家})['country_name']
+            # i.国家 = conn['一带一路国家钢企名录']['country_all'].find_one(
+            #     {'country_name_en': i.国家})['country_name']
+            tempvalue = i['国家'].strip()
+            i.国家 = tempvalue
             i.save()
         except Exception as e:
             print(i.国家)
             print(e)
+    conn.close()
 
 
 if __name__ == '__main__':
